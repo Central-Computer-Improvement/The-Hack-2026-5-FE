@@ -10,7 +10,7 @@ export default function Navbar() {
   let title = 'Smart Recipe AI';
   if (pathname === '/recipe') title = 'Generator Resep';
   else if (pathname === '/aipantryscan') title = 'AI Pantry Scan';
-  else if (pathname === '/saving') title = 'Savings Dashboard';
+  else if (pathname === '/savingsdashboard') title = 'Savings Dashboard';
   else if (pathname === '/pantry') title = 'Pantry Tracker';
 
   return (

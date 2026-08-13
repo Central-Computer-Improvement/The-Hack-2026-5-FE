@@ -66,9 +66,9 @@ export default function Sidebar() {
           </Link>
 
           <Link
-            href="/saving"
+            href="/savingsdashboard"
             className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-              pathname === '/saving'
+              pathname === '/savingsdashboard'
                 ? 'bg-[#1C482B] text-white shadow-md'
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
