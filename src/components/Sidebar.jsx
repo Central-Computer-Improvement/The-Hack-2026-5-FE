@@ -30,9 +30,9 @@ export default function Sidebar() {
 
         <nav className="space-y-1.5">
           <Link
-            href="/ai"
+            href="/aipantryscan"
             className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-              pathname === '/ai'
+              pathname === '/aipantryscan'
                 ? 'bg-[#1C482B] text-white shadow-md'
                 : 'text-gray-600 hover:bg-gray-50'
             }`}
