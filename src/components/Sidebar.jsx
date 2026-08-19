@@ -1,17 +1,43 @@
-"use client";
+'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { 
-  Camera, 
-  Refrigerator, 
-  UtensilsCrossed, 
-  TrendingUp, 
-  Settings, 
-  HelpCircle, 
-  ShoppingBag,
+import {
+  LayoutDashboard, Camera, Refrigerator, UtensilsCrossed,
+  Heart, Settings, HelpCircle,
 } from 'lucide-react';
+
+/** Daftar menu utama, disambungin ke halaman-halaman aplikasi */
+const NAV_ITEMS = [
+  { href: '/',                  label: 'Dashboard',       icon: LayoutDashboard },
+  { href: '/aipantryscan',      label: 'AI Pantry Scan',  icon: Camera },
+  { href: '/pantry',            label: 'Pantry Tracker',  icon: Refrigerator },
+  { href: '/recipe',            label: 'Recipe Generator',icon: UtensilsCrossed },
+  { href: '/favorites',         label: 'Favorites',       icon: Heart },
+];
+
+/** Link tambahan buat di bawah (kayak pengaturan & bantuan) */
+const FOOTER_ITEMS = [
+  { href: '/settings', label: 'Settings', icon: Settings },
+  { href: '#',         label: 'Help',     icon: HelpCircle },
+];
+
+/** Komponen link sidebar yang bisa dipake berulang, otomatis nyala kalau lagi aktif */
+function NavLink({ href, label, icon: Icon, isActive }) {
+  return (
+    <Link
+      href={href}
+      className={`w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 cursor-pointer ${
+        isActive
+          ? 'bg-[#1C482B] text-white shadow-md shadow-emerald-900/20'
+          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+      }`}
+    >
+      <Icon className="w-4 h-4 shrink-0" />
+      <span>{label}</span>
+    </Link>
+  );
+}
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -19,85 +45,29 @@ export default function Sidebar() {
   return (
     <aside className="w-64 bg-white border-r border-gray-100 flex flex-col justify-between p-5 shadow-sm z-10 shrink-0">
       <div>
-        <div className="mb-8">
-          <div className="items-center space-x-2">
-            <h1 className="text-[20px] font-bold text-[#1C482B] leading-tight">Smart Recipe AI</h1>
+        <div className="mb-7 px-1">
+          <div className="flex items-center gap-2 mb-1">
+            <h1 className="text-[18px] font-extrabold text-[#1C482B] leading-tight tracking-tight">
+              Smart Recipe AI
+            </h1>
           </div>
-          <p className="text-[14px] font-mediu px-2.5 py-1 inline-block mt-2">
-            Zero-Waste Mode Active
-          </p>
+          <span className="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full inline-block">
+            Zero-Waste Mode
+          </span>
         </div>
 
-        <nav className="space-y-1.5">
-          <Link
-            href="/aipantryscan"
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-              pathname === '/aipantryscan'
-                ? 'bg-[#1C482B] text-white shadow-md'
-                : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <Camera className="w-4 h-4" />
-            <span>AI Pantry Scan</span>
-          </Link>
-
-          <Link
-            href="/pantry"
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-              pathname === '/pantry'
-                ? 'bg-[#1C482B] text-white shadow-md'
-                : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <Refrigerator className="w-4 h-4" />
-            <span>Pantry Tracker</span>
-          </Link>
-
-          <Link
-            href="/recipe"
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-              pathname === '/recipe'
-                ? 'bg-[#1C482B] text-white shadow-md shadow-emerald-900/10'
-                : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <UtensilsCrossed className="w-4 h-4" />
-            <span>Recipe Generator</span>
-          </Link>
-
-          <Link
-            href="/savingsdashboard"
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-              pathname === '/savingsdashboard'
-                ? 'bg-[#1C482B] text-white shadow-md'
-                : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <TrendingUp className="w-4 h-4" />
-            <span>Savings Dashboard</span>
-          </Link>
+        <nav className="space-y-1" aria-label="Main navigation">
+          {NAV_ITEMS.map((item) => (
+            <NavLink key={item.href} {...item} isActive={pathname === item.href} />
+          ))}
         </nav>
       </div>
 
-      <div className="border-t border-gray-100 pt-4">
-        <div className="mb-4">
-          <Link 
-            href="/recipe"
-            className="w-full bg-[#1C482B] hover:bg-[#153821] text-white text-sm font-semibold py-3.5 px-4 rounded-full shadow-lg shadow-emerald-900/20 flex items-center justify-center space-x-2 transition-transform active:scale-95"
-          >
-            <span>Start Cooking</span>
-          </Link>
-        </div>
-
+      <div className="border-t border-gray-100 pt-4 space-y-3">
         <div className="space-y-1">
-          <button className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-            <Settings className="w-4 h-4" />
-            <span>Settings</span>
-          </button>
-          <button className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-xs font-medium text-gray-500 hover:bg-gray-50 transition-colors">
-            <HelpCircle className="w-4 h-4" />
-            <span>Help</span>
-          </button>
+          {FOOTER_ITEMS.map((item) => (
+            <NavLink key={item.href} {...item} isActive={pathname === item.href} />
+          ))}
         </div>
       </div>
     </aside>
