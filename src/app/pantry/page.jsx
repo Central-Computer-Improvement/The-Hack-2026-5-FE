@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Plus, Search, Refrigerator, AlertTriangle,
   Pencil, Trash2, X, Check, ChevronDown
@@ -94,8 +95,21 @@ function ItemForm({ form, setForm, onSubmit, submitLabel, isSubmitting }) {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="text-xs font-bold text-gray-700 mb-1 block">Jumlah</label>
-          <input type="number" min="0" value={form.qty}
-            onChange={(e) => setForm({ ...form, qty: Number(e.target.value) })}
+          <input
+            type="number"
+            min="0"
+            step="any"
+            placeholder="1"
+            value={form.qty === '' ? '' : form.qty}
+            onChange={(e) => {
+              const val = e.target.value;
+              setForm({ ...form, qty: val === '' ? '' : val });
+            }}
+            onBlur={() => {
+              if (form.qty === '' || Number(form.qty) < 0) {
+                setForm({ ...form, qty: 1 });
+              }
+            }}
             className="w-full py-2.5 px-4 rounded-xl border border-gray-200 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#1C482B]/40 transition-all"
           />
         </div>
@@ -142,6 +156,7 @@ function ItemForm({ form, setForm, onSubmit, submitLabel, isSubmitting }) {
 }
 
 export default function PantryPage() {
+  const router = useRouter();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -188,11 +203,12 @@ export default function PantryPage() {
   const handleAdd = async () => {
     if (!form.name.trim()) return;
     setIsSubmitting(true);
+    const parsedQty = form.qty === '' || isNaN(Number(form.qty)) || Number(form.qty) <= 0 ? 1 : Number(form.qty);
     try {
-      const payload = { name: form.name, quantity: `${form.qty} ${form.unit}`, category: form.category, isExpiringSoon: form.isExpiringSoon };
+      const payload = { name: form.name.trim(), quantity: `${parsedQty} ${form.unit}`, category: form.category, isExpiringSoon: form.isExpiringSoon };
       const res = await addPantryItem(payload);
       const newItem = res.data.data?.item;
-      const itemToAdd = newItem ? { ...newItem, qty: form.qty, unit: form.unit } : { ...form, id: Date.now() };
+      const itemToAdd = newItem ? { ...newItem, qty: parsedQty, unit: form.unit } : { ...form, id: Date.now(), qty: parsedQty };
       setItems((prev) => [itemToAdd, ...prev]);
       setForm(BLANK_FORM);
       setIsAddModalOpen(false);
@@ -206,10 +222,11 @@ export default function PantryPage() {
 
   const handleEditSave = async () => {
     setIsSubmitting(true);
+    const parsedQty = form.qty === '' || isNaN(Number(form.qty)) || Number(form.qty) <= 0 ? 1 : Number(form.qty);
     try {
-      const payload = { name: form.name, quantity: `${form.qty} ${form.unit}`, category: form.category, isExpiringSoon: form.isExpiringSoon };
+      const payload = { name: form.name.trim(), quantity: `${parsedQty} ${form.unit}`, category: form.category, isExpiringSoon: form.isExpiringSoon };
       await updatePantryItem(editItem.id, payload);
-      setItems((prev) => prev.map((i) => i.id === editItem.id ? { ...i, ...form } : i));
+      setItems((prev) => prev.map((i) => i.id === editItem.id ? { ...i, ...form, qty: parsedQty } : i));
       setEditItem(null);
       setForm(BLANK_FORM);
       showToast('Bahan berhasil diperbarui!');
@@ -249,6 +266,16 @@ export default function PantryPage() {
     setForm({ name: item.name, category: item.category, qty: item.qty ?? 1, unit: item.unit ?? 'buah', storage: item.storage ?? 'Kulkas', isExpiringSoon: item.isExpiringSoon || false });
   };
 
+  const handleCookUrgent = () => {
+    if (urgentItems.length === 0) return;
+    const urgentData = urgentItems.map((item) => ({
+      name: item.name,
+      quantity: `${item.qty || 1} ${item.unit || 'buah'}`.trim(),
+      isExpiringSoon: true,
+    }));
+    router.push(`/recipe?ingredients=${encodeURIComponent(JSON.stringify(urgentData))}`);
+  };
+
   return (
     <div className="flex-1 bg-[#F6F8F6] p-6 md:p-8 overflow-y-auto">
       <Toast message={toast.message} type={toast.type} onClose={hideToast} />
@@ -278,7 +305,10 @@ export default function PantryPage() {
               <p className="text-sm font-bold text-red-700">{urgentItems.length} bahan perlu segera dimasak!</p>
               <p className="text-xs text-red-500 font-medium mt-0.5">{urgentItems.map((i) => i.name).join(', ')}</p>
             </div>
-            <button className="shrink-0 text-xs font-bold text-[#1C482B] bg-white border border-emerald-200 hover:bg-emerald-50 px-3 py-1.5 rounded-xl transition-colors cursor-pointer">
+            <button
+              onClick={handleCookUrgent}
+              className="shrink-0 text-xs font-bold text-[#1C482B] bg-white border border-emerald-200 hover:bg-emerald-50 px-3.5 py-2 rounded-xl transition-all cursor-pointer active:scale-95 shadow-xs"
+            >
               Cari Resep →
             </button>
           </div>

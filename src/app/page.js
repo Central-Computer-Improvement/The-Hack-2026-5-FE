@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Refrigerator, Camera, UtensilsCrossed, Clock, AlertTriangle, ChevronRight } from 'lucide-react';
 
 import StatCard from '../components/ui/StatCard';
@@ -35,20 +36,23 @@ function CriticalItemRow({ item }) {
 }
 
 function RecipeCard({ recipe }) {
+  const prepTime = recipe.prepTimeMinutes || 15;
+
   return (
     <div className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-100 hover:shadow-md transition-shadow cursor-pointer group">
-      <div className="w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100 border border-gray-200">
-        <div className="w-full h-full bg-white flex items-center justify-center">
-          <UtensilsCrossed className="w-8 h-8 text-red-500" />
-        </div>
+      <div className="w-16 h-16 rounded-2xl overflow-hidden shrink-0 bg-emerald-50 border border-emerald-100 flex items-center justify-center">
+        <UtensilsCrossed className="w-6 h-6 text-[#1C482B]" />
       </div>
       <div className="flex-1 min-w-0">
-        <h4 className="text-sm font-bold text-gray-900 leading-snug mb-1 line-clamp-2">{recipe.title}</h4>
+        <h4 className="text-sm font-bold text-gray-900 leading-snug mb-1 line-clamp-1">{recipe.title}</h4>
         <div className="flex items-center gap-3 text-xs text-gray-500 font-medium">
-          <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{recipe.prepTimeMinutes} menit</span>
+          <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{prepTime} menit</span>
+          {recipe.usedIngredients?.length > 0 && (
+            <span className="text-gray-400 truncate max-w-[120px]">• {recipe.usedIngredients.slice(0, 2).join(', ')}</span>
+          )}
         </div>
         <Link href="/recipe">
-          <button className="mt-2.5 text-[11px] font-bold text-[#1C482B] bg-emerald-50 hover:bg-emerald-100 px-3 py-1 rounded-full transition-colors cursor-pointer">
+          <button className="mt-2 text-[11px] font-bold text-[#1C482B] bg-emerald-50 hover:bg-emerald-100 px-3 py-1 rounded-full transition-colors cursor-pointer">
             Lihat Resep →
           </button>
         </Link>
@@ -58,6 +62,7 @@ function RecipeCard({ recipe }) {
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const { user } = useAuth();
   const [pantryItems, setPantryItems] = useState([]);
   const [historyItems, setHistoryItems] = useState([]);
@@ -83,10 +88,26 @@ export default function HomePage() {
     [pantryItems]
   );
 
-  const recentRecipes = useMemo(() =>
-    historyItems.flatMap((h) => h.recipes ?? []).slice(0, 2),
-    [historyItems]
-  );
+  const recentRecipes = useMemo(() => {
+    if (!historyItems || historyItems.length === 0) return [];
+    if (historyItems[0]?.recipes && Array.isArray(historyItems[0].recipes)) {
+      return historyItems.flatMap((h) => h.recipes ?? []).slice(0, 2);
+    }
+    return historyItems.slice(0, 2);
+  }, [historyItems]);
+
+  const handleCookCritical = () => {
+    if (criticalItems.length === 0) {
+      router.push('/recipe');
+      return;
+    }
+    const urgentData = criticalItems.map((item) => ({
+      name: item.name,
+      quantity: item.quantity || `${item.qty || 1} ${item.unit || 'buah'}`.trim(),
+      isExpiringSoon: true,
+    }));
+    router.push(`/recipe?ingredients=${encodeURIComponent(JSON.stringify(urgentData))}`);
+  };
 
   return (
     <div className="flex-1 bg-[#F6F8F6] p-6 md:p-8 overflow-y-auto">
@@ -167,11 +188,12 @@ export default function HomePage() {
               </div>
             )}
 
-            <Link href="/recipe">
-              <button className="mt-4 w-full py-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-[#1C482B] text-xs font-bold transition-colors cursor-pointer">
-                Cari Resep dari Bahan Ini →
-              </button>
-            </Link>
+            <button
+              onClick={handleCookCritical}
+              className="mt-4 w-full py-2.5 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-[#1C482B] text-xs font-bold transition-colors cursor-pointer"
+            >
+              Cari Resep dari Bahan Ini →
+            </button>
           </div>
 
           <div className="lg:col-span-4 space-y-4">

@@ -93,12 +93,7 @@ export default function SavingsDashboardPage() {
     <div className="flex-1 bg-[#F6F8F6] p-6 md:p-8 overflow-y-auto">
       <Toast message={toast.message} type={toast.type} onClose={hideToast} />
 
-      <div className="max-w-5xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-3xl font-extrabold text-[#1B3022] tracking-tight">Savings &amp; Impact</h1>
-          <p className="text-gray-500 text-sm mt-1">Pantau penghematan finansial dan dampak lingkungan dapur Anda.</p>
-        </div>
-
+      <div className="max-w-6xl mx-auto space-y-6 stagger-children">
         {isLoading ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-8"><SkeletonSavingsCard /></div>

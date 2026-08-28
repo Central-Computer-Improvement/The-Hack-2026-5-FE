@@ -309,6 +309,39 @@ export default function RecipePage() {
       .finally(() => setIsLoadingHistory(false));
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      const ingredientsParam = searchParams.get('ingredients');
+      if (ingredientsParam) {
+        try {
+          const parsed = JSON.parse(ingredientsParam);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setIngredients(
+              parsed.map((item) => ({
+                name: typeof item === 'string' ? item : item.name || '',
+                quantity: typeof item === 'string' ? '' : item.quantity || '',
+                isExpiringSoon: item.isExpiringSoon ?? true,
+              }))
+            );
+            setActiveTab('generate');
+            showToast(`${parsed.length} bahan dimasukkan dari pantry.`);
+          }
+        } catch {
+          const items = ingredientsParam
+            .split(',')
+            .map((name) => ({ name: name.trim(), quantity: '', isExpiringSoon: true }))
+            .filter((i) => i.name);
+          if (items.length > 0) {
+            setIngredients(items);
+            setActiveTab('generate');
+            showToast(`${items.length} bahan dimasukkan dari pantry.`);
+          }
+        }
+      }
+    }
+  }, [showToast]);
+
   const toggleTool = useCallback((tool) => {
     setSelectedTools((prev) =>
       prev.includes(tool) ? prev.filter((t) => t !== tool) : [...prev, tool]

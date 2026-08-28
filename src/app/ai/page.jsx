@@ -14,10 +14,10 @@ export default function AiPantryScanPage() {
   const [isAddingAll, setIsAddingAll] = useState(false);
   const [cameraError, setCameraError] = useState(null);
   const [showOptionsModal, setShowOptionsModal] = useState(false);
-  const [stream, setStream] = useState(null);
   const [detectedItems, setDetectedItems] = useState([]);
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
+  const streamRef = useRef(null);
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -25,20 +25,35 @@ export default function AiPantryScanPage() {
   const hideToast = useCallback(() => setToast({ message: '', type: 'success' }), []);
 
   const stopCamera = useCallback(() => {
-    if (stream) stream.getTracks().forEach((t) => t.stop());
-    if (videoRef.current) videoRef.current.srcObject = null;
-    setStream(null);
-    setIsCameraActive(false);
-  }, [stream]);
-
-  useEffect(() => () => stopCamera(), [stopCamera]);
-
-  useEffect(() => {
-    if (isCameraActive && stream && videoRef.current) {
-      videoRef.current.srcObject = stream;
-      videoRef.current.play().catch(() => {});
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t) => t.stop());
+      streamRef.current = null;
     }
-  }, [isCameraActive, stream]);
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setIsCameraActive(false);
+  }, []);
+
+  // Cleanup on component unmount only
+  useEffect(() => {
+    return () => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+      }
+    };
+  }, []);
+
+  // Attach stream when video element becomes available
+  useEffect(() => {
+    if (isCameraActive && streamRef.current && videoRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+      videoRef.current.play().catch((err) => {
+        console.error('Error playing camera feed:', err);
+      });
+    }
+  }, [isCameraActive]);
 
   const runScan = async (imageBase64) => {
     setIsScanning(true);
@@ -57,30 +72,53 @@ export default function AiPantryScanPage() {
     setShowOptionsModal(false);
     setCameraError(null);
     try {
-      if (stream) stream.getTracks().forEach((t) => t.stop());
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
-      setStream(mediaStream);
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+      }
+
+      const mediaStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: { ideal: 'environment' },
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+        audio: false,
+      });
+
+      streamRef.current = mediaStream;
       setIsCameraActive(true);
     } catch {
       try {
         const fallback = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-        setStream(fallback);
+        streamRef.current = fallback;
         setIsCameraActive(true);
-      } catch {
-        setCameraError('Tidak dapat mengakses kamera. Pastikan kamera terhubung dan izin telah diberikan.');
+      } catch (err) {
+        console.error('Camera access error:', err);
+        setCameraError('Tidak dapat mengakses kamera. Pastikan izin kamera telah diberikan di browser.');
+        showToast('Izin kamera ditolak atau kamera tidak ditemukan.', 'error');
       }
     }
   };
 
   const capturePhoto = () => {
     if (!videoRef.current) return;
+    const video = videoRef.current;
+
+    const width = video.videoWidth || 640;
+    const height = video.videoHeight || 480;
+
     const canvas = document.createElement('canvas');
-    canvas.width = videoRef.current.videoWidth || 640;
-    canvas.height = videoRef.current.videoHeight || 480;
-    canvas.getContext('2d').drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
-    const base64 = canvas.toDataURL('image/jpeg');
-    setSelectedImage(base64);
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const base64 = canvas.toDataURL('image/jpeg', 0.85);
+
     stopCamera();
+    setSelectedImage(base64);
     runScan(base64);
   };
 
@@ -91,8 +129,8 @@ export default function AiPantryScanPage() {
     const reader = new FileReader();
     reader.onload = (evt) => {
       const base64 = evt.target.result;
-      setSelectedImage(base64);
       stopCamera();
+      setSelectedImage(base64);
       runScan(base64);
     };
     reader.readAsDataURL(file);
@@ -113,9 +151,9 @@ export default function AiPantryScanPage() {
   };
 
   const resetScan = () => {
+    stopCamera();
     setSelectedImage(null);
     setDetectedItems([]);
-    stopCamera();
   };
 
   return (
