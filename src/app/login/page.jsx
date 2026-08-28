@@ -2,51 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
-import { Plus_Jakarta_Sans } from "next/font/google";
-
-const jakarta = Plus_Jakarta_Sans({ weight: ['300', '400', '700'], subsets: ["latin"] });
 import { loginUser } from '../../services/auth.service';
 import { useAuth } from '../../context/AuthContext';
 
-/** Left-side brand panel shown on large screens */
-function BrandPanel() {
-  return (
-    <div className="hidden lg:flex lg:w-[45%] bg-[#1C482B] flex-col justify-between p-12 relative overflow-hidden">
-
-      <div className="relative z-10 flex items-center gap-3">
-        <span className="text-white font-extrabold text-xl tracking-tight">Smart Recipe AI</span>
-      </div>
-
-      <div className="relative z-10">
-        <h2 className="text-4xl font-black text-white leading-tight mb-4">
-          Masak Cerdas,<br />
-          <span className="text-emerald-300">Bebas Sampah</span><br />
-          Makanan.
-        </h2>
-        <p className="text-emerald-100/80 text-base font-medium leading-relaxed">
-          Manfaatkan bahan yang ada di dapur, temukan resep terbaik, dan kurangi pemborosan makanan bersama AI.
-        </p>
-        <div className="mt-8 space-y-3">
-          {['Scan pantry dengan kamera AI', 'Resep sesuai bahan yang tersedia', 'Pantau penghematan bulanan Anda'].map((feat) => (
-            <div key={feat} className="flex items-center gap-3">
-              <span className="text-emerald-100/90 text-sm font-medium">- {feat}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="relative z-10">
-        <blockquote className="text-emerald-100/70 text-sm italic">
-          "Mengurangi food waste adalah salah satu cara paling efektif untuk mengurangi emisi karbon."
-        </blockquote>
-      </div>
-    </div>
-  );
-}
-
-/** Password field with visibility toggle */
 function PasswordInput({ id, label, value, onChange, placeholder }) {
   const [show, setShow] = useState(false);
   return (
@@ -103,11 +64,28 @@ export default function LoginPage() {
   };
 
   return (
-    <div className={`flex w-full min-h-screen ${jakarta.className}`}>
-      <BrandPanel />
+    <div className="flex w-full min-h-screen">
+      <div className="hidden lg:block lg:w-[45%] relative overflow-hidden">
+        <Image
+          src="/login.jpg"
+          alt="Smart Recipe AI illustration"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-[#1C482B]/50" />
+        <div className="absolute inset-0 flex flex-col justify-end p-12">
+          <h2 className="text-4xl font-black text-white leading-tight tracking-tight">
+            Smart Recipe AI
+          </h2>
+          <p className="text-emerald-100/80 text-base font-medium mt-2">
+            Zero-Waste Kitchen, powered by AI.
+          </p>
+        </div>
+      </div>
 
       <div className="flex-1 flex flex-col justify-center items-center px-6 py-12 bg-[#F6F8F6]">
-        <div className="w-full max-w-md animate-fade-in-up">
+        <div className="w-full max-w-md">
           <div className="flex items-center gap-2 mb-8 lg:hidden">
             <span className="font-extrabold text-[#1C482B] text-lg">Smart Recipe AI</span>
           </div>
@@ -154,7 +132,7 @@ export default function LoginPage() {
             />
 
             <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2 cursor-pointer group">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <div
                   onClick={() => setRemember(!remember)}
                   className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all cursor-pointer ${
@@ -182,16 +160,14 @@ export default function LoginPage() {
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                <>
-                  <span>Masuk</span>
-                </>
+                <span>Masuk</span>
               )}
             </button>
           </form>
 
           <p className="text-center text-xs text-gray-400 mt-8">
             Dengan masuk, Anda menyetujui{' '}
-            <Link href="#" className="underline hover:text-gray-600">Syarat & Ketentuan</Link>
+            <Link href="#" className="underline hover:text-gray-600">Syarat &amp; Ketentuan</Link>
             {' '}kami.
           </p>
         </div>

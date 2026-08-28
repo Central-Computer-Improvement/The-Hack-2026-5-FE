@@ -2,22 +2,21 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { TrendingUp, Refrigerator, Camera, UtensilsCrossed, Clock, AlertTriangle, ChevronRight } from 'lucide-react';
+import { Refrigerator, Camera, UtensilsCrossed, Clock, AlertTriangle, ChevronRight } from 'lucide-react';
 
 import StatCard from '../components/ui/StatCard';
 import Badge from '../components/ui/Badge';
 import { useAuth } from '../context/AuthContext';
 import { getPantry } from '../services/pantry.service';
 import { getHistory } from '../services/ai.service';
+import { SkeletonStatCard, SkeletonRecipeCard } from '../components/ui/Skeleton';
 
-/** Kartu jalan pintas buat akses fitur-fitur utama aplikasi */
 const QUICK_ACTIONS = [
-  { id: 'scan',   label: 'Scan Kulkas',      desc: 'Deteksi bahan otomatis',       href: '/aipantryscan', icon: Camera },
-  { id: 'pantry', label: 'Tambah Bahan',     desc: 'Input manual ke pantry',        href: '/pantry',       icon: Refrigerator },
-  { id: 'recipe', label: 'Generator Resep',  desc: 'Cari resep dari bahan Anda',    href: '/recipe',       icon: UtensilsCrossed },
+  { id: 'scan',   label: 'Scan Kulkas',      desc: 'Deteksi bahan otomatis',       href: '/ai',     icon: Camera },
+  { id: 'pantry', label: 'Tambah Bahan',     desc: 'Input manual ke pantry',        href: '/pantry', icon: Refrigerator },
+  { id: 'recipe', label: 'Generator Resep',  desc: 'Cari resep dari bahan Anda',    href: '/recipe', icon: UtensilsCrossed },
 ];
 
-/** Baris buat nampilin satu bahan yang udah mau kadaluwarsa */
 function CriticalItemRow({ item }) {
   return (
     <div className="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
@@ -35,7 +34,6 @@ function CriticalItemRow({ item }) {
   );
 }
 
-/** Kartu resep versi ringkas buat dipajang di bagian "Resep Kilat" */
 function RecipeCard({ recipe }) {
   return (
     <div className="flex gap-4 p-4 bg-white rounded-2xl border border-gray-100 hover:shadow-md transition-shadow cursor-pointer group">
@@ -66,7 +64,6 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    /** Tarik semua data buat dashboard secara bersamaan (parallel) biar cepet */
     Promise.all([getPantry(), getHistory()])
       .then(([pantryRes, historyRes]) => {
         setPantryItems(pantryRes.data.data?.items ?? []);
@@ -92,7 +89,7 @@ export default function HomePage() {
   );
 
   return (
-    <div className={`flex-1 bg-[#F6F8F6] p-6 md:p-8 overflow-y-auto`}>
+    <div className="flex-1 bg-[#F6F8F6] p-6 md:p-8 overflow-y-auto">
       <div className="max-w-6xl mx-auto space-y-6 stagger-children">
 
         <div className="relative bg-[#1C482B] rounded-3xl px-7 py-8 overflow-hidden animate-fade-in-up">
@@ -116,20 +113,26 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <StatCard
-            title="Total Bahan" value={isLoading ? '...' : String(pantryItems.length)}
-            subtext="di pantry" icon={<Refrigerator className="w-5 h-5 text-gray-800" />} iconBg="bg-white border border-gray-200"
-          />
-          <StatCard
-            title="Hampir Basi" value={isLoading ? '...' : String(urgentCount)}
-            subtext="perlu segera dimasak" icon={<AlertTriangle className="w-5 h-5 text-red-600" />} iconBg="bg-white border border-red-100"
-          />
-          <StatCard
-            title="Riwayat Resep" value={isLoading ? '...' : String(historyItems.length)}
-            subtext="sesi AI" icon={<UtensilsCrossed className="w-5 h-5 text-gray-800" />} iconBg="bg-white border border-gray-200"
-          />
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => <SkeletonStatCard key={i} />)}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <StatCard
+              title="Total Bahan" value={String(pantryItems.length)}
+              subtext="di pantry" icon={<Refrigerator className="w-5 h-5 text-gray-800" />} iconBg="bg-white border border-gray-200"
+            />
+            <StatCard
+              title="Hampir Basi" value={String(urgentCount)}
+              subtext="perlu segera dimasak" icon={<AlertTriangle className="w-5 h-5 text-red-600" />} iconBg="bg-white border border-red-100"
+            />
+            <StatCard
+              title="Riwayat Resep" value={String(historyItems.length)}
+              subtext="sesi AI" icon={<UtensilsCrossed className="w-5 h-5 text-gray-800" />} iconBg="bg-white border border-gray-200"
+            />
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className="lg:col-span-4 bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
@@ -175,9 +178,9 @@ export default function HomePage() {
             <h3 className="font-extrabold text-gray-900 text-base">Aksi Cepat</h3>
             {QUICK_ACTIONS.map((action) => (
               <Link key={action.id} href={action.href}>
-                <div className={`flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-200 hover:shadow-md transition-all cursor-pointer group mb-3`}>
-                  <div className={`w-11 h-11 rounded-2xl bg-white border border-gray-100 flex items-center justify-center shrink-0`}>
-                    <action.icon className={`w-5 h-5 text-red-600`} />
+                <div className="flex items-center gap-4 p-4 bg-white rounded-2xl border border-gray-200 hover:shadow-md transition-all cursor-pointer group mb-3">
+                  <div className="w-11 h-11 rounded-2xl bg-white border border-gray-100 flex items-center justify-center shrink-0">
+                    <action.icon className="w-5 h-5 text-red-600" />
                   </div>
                   <div className="flex-1">
                     <p className="text-sm font-bold text-gray-900">{action.label}</p>
@@ -200,7 +203,7 @@ export default function HomePage() {
             </div>
             <div className="space-y-3">
               {isLoading ? (
-                [1, 2].map((i) => <div key={i} className="h-24 bg-gray-100 rounded-2xl animate-pulse" />)
+                [1, 2].map((i) => <SkeletonRecipeCard key={i} />)
               ) : recentRecipes.length === 0 ? (
                 <div className="bg-white rounded-2xl border border-gray-100 p-4 text-center">
                   <p className="text-sm text-gray-400">Belum ada riwayat resep.</p>

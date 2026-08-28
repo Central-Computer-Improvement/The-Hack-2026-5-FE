@@ -1,17 +1,3 @@
-/**
- * StatCard — Reusable metric/stat card
- * Digunakan di: Homepage, SavingsDashboard
- *
- * @param {{
- *   title: string,
- *   value: string,
- *   subtext?: string,
- *   icon: React.ReactNode,
- *   iconBg?: string,
- *   trend?: string,
- *   className?: string,
- * }} props
- */
 export default function StatCard({
   title,
   value,

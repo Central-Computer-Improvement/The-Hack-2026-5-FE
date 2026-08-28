@@ -1,14 +1,3 @@
-/**
- * EmptyState — Reusable empty/zero-data state component
- *
- * @param {{
- *   icon: React.ReactNode,
- *   title: string,
- *   description?: string,
- *   action?: React.ReactNode,
- *   className?: string,
- * }} props
- */
 export default function EmptyState({ icon, title, description, action, className = '' }) {
   return (
     <div className={`flex flex-col items-center justify-center py-16 px-6 text-center ${className}`}>

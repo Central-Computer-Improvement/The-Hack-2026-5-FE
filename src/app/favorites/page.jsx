@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Heart, Trash2, UtensilsCrossed, Clock, Star, ChefHat } from 'lucide-react';
+import { Trash2, UtensilsCrossed, Clock, Star, ChefHat } from 'lucide-react';
 import EmptyState from '../../components/ui/EmptyState';
 import Toast from '../../components/ui/Toast';
+import { SkeletonFavoriteCard } from '../../components/ui/Skeleton';
 import { getFavorites, removeFavorite } from '../../services/favorites.service';
 
 function FavoriteRecipeCard({ recipe, onRemove }) {
@@ -86,9 +87,7 @@ export default function FavoritesPage() {
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="h-64 bg-gray-100 rounded-3xl animate-pulse" />
-            ))}
+            {[1, 2, 3, 4, 5, 6].map((i) => <SkeletonFavoriteCard key={i} />)}
           </div>
         ) : favorites.length === 0 ? (
           <div className="bg-white rounded-[2.5rem] border border-gray-100 shadow-sm p-8 max-w-2xl mx-auto">

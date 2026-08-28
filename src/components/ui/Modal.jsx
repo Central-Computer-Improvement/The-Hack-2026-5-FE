@@ -3,20 +3,6 @@
 import { useEffect } from 'react';
 import { X } from 'lucide-react';
 
-/**
- * Modal — Reusable modal dialog wrapper
- * DRY: mengganti inline modal di aipantryscan & recipe pages
- *
- * @param {{
- *   isOpen: boolean,
- *   onClose: () => void,
- *   title?: string,
- *   children: React.ReactNode,
- *   size?: 'sm' | 'md' | 'lg',
- *   className?: string,
- * }} props
- */
-
 const SIZE_CLASSES = {
   sm: 'max-w-sm',
   md: 'max-w-lg',
@@ -24,7 +10,6 @@ const SIZE_CLASSES = {
 };
 
 export default function Modal({ isOpen, onClose, title, children, size = 'md', className = '' }) {
-  // Close on Escape key
   useEffect(() => {
     if (!isOpen) return;
     const handleKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -32,7 +17,6 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md', c
     return () => document.removeEventListener('keydown', handleKey);
   }, [isOpen, onClose]);
 
-  // Lock body scroll when open
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
@@ -50,7 +34,6 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md', c
       <div
         className={`bg-white rounded-3xl w-full shadow-2xl border border-gray-100 animate-scale-in ${SIZE_CLASSES[size]} ${className}`}
       >
-        {/* Header */}
         {title && (
           <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-50">
             <h3 className="text-lg font-bold text-gray-900">{title}</h3>
@@ -64,7 +47,6 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md', c
           </div>
         )}
 
-        {/* Body */}
         <div className={title ? 'px-6 pb-6 pt-4' : 'p-6'}>
           {children}
         </div>

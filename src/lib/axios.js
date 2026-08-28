@@ -1,12 +1,10 @@
 import axios from 'axios';
 
-/** Singleton axios instance pointed at the Smart Recipe AI backend */
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 
-/** Attach JWT token from localStorage to every request */
 api.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
     const token = localStorage.getItem('token');
@@ -15,7 +13,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-/** Handle 401 globally — clear session and redirect to login */
 api.interceptors.response.use(
   (response) => response,
   (error) => {

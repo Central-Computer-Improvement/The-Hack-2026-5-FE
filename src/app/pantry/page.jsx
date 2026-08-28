@@ -3,12 +3,13 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Plus, Search, Refrigerator, AlertTriangle,
-  Pencil, Trash2, X, Check, ChevronDown, UtensilsCrossed
+  Pencil, Trash2, X, Check, ChevronDown
 } from 'lucide-react';
 import Badge from '../../components/ui/Badge';
 import Modal from '../../components/ui/Modal';
 import EmptyState from '../../components/ui/EmptyState';
 import Toast from '../../components/ui/Toast';
+import { SkeletonPantryCard } from '../../components/ui/Skeleton';
 import { getPantry, addPantryItem, updatePantryItem, deletePantryItem } from '../../services/pantry.service';
 
 const CATEGORIES = ['Semua', 'Sayuran', 'Daging & Protein', 'Bumbu & Rempah', 'Karbohidrat', 'Buah'];
@@ -18,7 +19,6 @@ const SEARCH_SUGGESTIONS = ['Telur', 'Bawang Merah', 'Tomat', 'Nasi', 'Ayam', 'K
 
 const BLANK_FORM = { name: '', category: 'Sayuran', qty: 1, unit: 'buah', storage: 'Kulkas', isExpiringSoon: false };
 
-/** Kartu buat nampilin satu bahan di pantry, lengkap sama info kadaluwarsa & tombol aksi */
 function PantryItemCard({ item, onEdit, onDelete, onAdjustQty }) {
   const isUrgent = item.isExpiringSoon;
 
@@ -28,7 +28,7 @@ function PantryItemCard({ item, onEdit, onDelete, onAdjustQty }) {
     }`}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-3">
-          <div className={`w-9 h-9 rounded-xl bg-white border border-gray-100 flex items-center justify-center shrink-0`}>
+          <div className="w-9 h-9 rounded-xl bg-white border border-gray-100 flex items-center justify-center shrink-0">
             <div className={`w-3 h-3 rounded-full ${isUrgent ? 'bg-red-600' : 'bg-gray-300'}`} />
           </div>
           <div>
@@ -68,7 +68,6 @@ function PantryItemCard({ item, onEdit, onDelete, onAdjustQty }) {
   );
 }
 
-/** Form tambah/edit bahan yang dipake bareng-bareng di modal (biar nggak nulis dua kali) */
 function ItemForm({ form, setForm, onSubmit, submitLabel, isSubmitting }) {
   return (
     <div className="space-y-4">
@@ -157,7 +156,6 @@ export default function PantryPage() {
   const showToast = useCallback((message, type = 'success') => setToast({ message, type }), []);
   const hideToast = useCallback(() => setToast({ message: '', type: 'success' }), []);
 
-  /** Ambil data isi pantry dari API pas halamannya pertama kali dibuka */
   useEffect(() => {
     getPantry()
       .then((res) => {
@@ -331,7 +329,7 @@ export default function PantryPage() {
 
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => <div key={i} className="h-40 bg-gray-100 rounded-2xl animate-pulse" />)}
+            {[1, 2, 3, 4, 5, 6].map((i) => <SkeletonPantryCard key={i} />)}
           </div>
         ) : filteredItems.length === 0 ? (
           <div className="bg-white rounded-3xl border border-gray-100">

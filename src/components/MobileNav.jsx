@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Camera, Refrigerator, UtensilsCrossed, Heart } from 'lucide-react';
+import { LayoutDashboard, Camera, Refrigerator, UtensilsCrossed, TrendingUp } from 'lucide-react';
 
 const NAV_ITEMS = [
-  { href: '/',                  label: 'Home',    icon: LayoutDashboard },
-  { href: '/aipantryscan',      label: 'Scan',    icon: Camera },
-  { href: '/pantry',            label: 'Pantry',  icon: Refrigerator },
-  { href: '/recipe',            label: 'Resep',   icon: UtensilsCrossed },
-  { href: '/favorites',         label: 'Favorit', icon: Heart },
+  { href: '/',       label: 'Home',   icon: LayoutDashboard },
+  { href: '/ai',     label: 'Scan',   icon: Camera },
+  { href: '/pantry', label: 'Pantry', icon: Refrigerator },
+  { href: '/recipe', label: 'Resep',  icon: UtensilsCrossed },
+  { href: '/savings',label: 'Impact', icon: TrendingUp },
 ];
 
 export default function MobileNav() {
@@ -30,7 +30,7 @@ export default function MobileNav() {
               }`}
             >
               <div className={`relative flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 ${isActive ? 'bg-emerald-50' : 'bg-transparent'}`}>
-                <Icon className={`w-5 h-5 transition-transform duration-200 ${isActive ? 'scale-110 text-emerald-700' : ''}`} />
+                <Icon className={`w-5 h-5 ${isActive ? 'text-emerald-700' : ''}`} />
               </div>
               <span className={`text-[10px] font-bold mt-1 ${isActive ? 'text-[#1C482B]' : 'text-gray-500'}`}>{item.label}</span>
             </Link>

@@ -1,9 +1,5 @@
 @import "tailwindcss";
 
-/* =============================================
-   DESIGN TOKENS — Smart Recipe AI
-   Primary: #1C482B | Accent: #10B981 | BG: #F6F8F6
-   ============================================= */
 :root {
   --color-primary: #1C482B;
   --color-primary-hover: #153821;
@@ -14,7 +10,7 @@
   --color-text: #111827;
   --color-text-muted: #6B7280;
 
-  --radius-card: 1.5rem;  /* 24px / rounded-3xl */
+  --radius-card: 1.5rem;
   --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.07);
   --transition-base: 150ms cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -29,9 +25,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* =============================================
-   BASE STYLES
-   ============================================= */
 *,
 *::before,
 *::after {
@@ -50,9 +43,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* =============================================
-   CUSTOM SCROLLBAR
-   ============================================= */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -71,9 +61,6 @@ body {
   background: #9CA3AF;
 }
 
-/* =============================================
-   ANIMATIONS
-   ============================================= */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -123,7 +110,6 @@ body {
 .animate-slide-right { animation: slideInRight 0.3s ease both; }
 .animate-pulse-soft  { animation: pulse-soft 2s ease-in-out infinite; }
 
-/* Stagger children */
 .stagger-children > *:nth-child(1) { animation-delay: 0ms; }
 .stagger-children > *:nth-child(2) { animation-delay: 60ms; }
 .stagger-children > *:nth-child(3) { animation-delay: 120ms; }
@@ -131,9 +117,6 @@ body {
 .stagger-children > *:nth-child(5) { animation-delay: 240ms; }
 .stagger-children > *:nth-child(6) { animation-delay: 300ms; }
 
-/* =============================================
-   REDUCED MOTION SUPPORT
-   ============================================= */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -144,9 +127,6 @@ body {
   }
 }
 
-/* =============================================
-   UTILITY OVERRIDES
-   ============================================= */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;

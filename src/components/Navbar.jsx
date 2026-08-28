@@ -6,19 +6,18 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../context/AuthContext';
 
-/** Pemetaan URL ke judul halaman buat ditampilin di navbar atas */
 const PAGE_TITLES = {
-  '/':                 { title: 'Dashboard',        subtitle: 'Selamat datang kembali!' },
-  '/aipantryscan':     { title: 'AI Pantry Scan',   subtitle: 'Scan bahan makanan dengan kamera' },
-  '/pantry':           { title: 'Pantry Tracker',   subtitle: 'Kelola inventaris dapur Anda' },
-  '/recipe':           { title: 'Recipe Generator', subtitle: 'Temukan resep dari bahan yang ada' },
-  '/savingsdashboard': { title: 'Savings Report',   subtitle: 'Pantau dampak & penghematan Anda' },
-  '/settings':         { title: 'Pengaturan',       subtitle: 'Kelola profil & preferensi dapur' },
+  '/':          { title: 'Dashboard',        subtitle: 'Selamat datang kembali!' },
+  '/ai':        { title: 'AI Pantry Scan',   subtitle: 'Scan bahan makanan dengan kamera' },
+  '/pantry':    { title: 'Pantry Tracker',   subtitle: 'Kelola inventaris dapur Anda' },
+  '/recipe':    { title: 'Recipe Generator', subtitle: 'Temukan resep dari bahan yang ada' },
+  '/favorites': { title: 'Favorites',        subtitle: 'Daftar resep favorit Anda' },
+  '/savings':   { title: 'Savings & Impact', subtitle: 'Pantau dampak & penghematan finansial Anda' },
+  '/settings':  { title: 'Pengaturan',       subtitle: 'Kelola profil & preferensi dapur' },
 };
 
 const DEFAULT_PAGE = { title: 'Smart Recipe AI', subtitle: 'Masak cerdas, bebas sampah makanan' };
 
-/** Data notifikasi bohongan (statis) — nanti diganti pakai API beneran ya kalau udah ada */
 const NOTIFICATIONS = [
   { id: 1, text: '3 bahan hampir basi dalam 1 hari', time: '5 mnt lalu', urgent: true },
   { id: 2, text: 'Resep baru cocok dengan pantry Anda', time: '1 jam lalu', urgent: false },
@@ -58,12 +57,12 @@ export default function Navbar() {
           >
             <Bell className="w-5 h-5" />
             {unreadCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white animate-pulse-soft" />
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white" />
             )}
           </button>
 
           {showNotif && (
-            <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-scale-in z-50">
+            <div className="absolute right-0 top-full mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50">
               <div className="px-4 py-3 border-b border-gray-50 flex items-center justify-between">
                 <span className="text-sm font-bold text-gray-900">Notifikasi</span>
                 <span className="text-[11px] font-semibold text-[#1C482B] bg-emerald-50 px-2 py-0.5 rounded-full">
@@ -103,7 +102,7 @@ export default function Navbar() {
           </button>
 
           {showProfile && (
-            <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-scale-in z-50">
+            <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden z-50">
               <div className="px-4 py-3 border-b border-gray-50">
                 <p className="text-sm font-bold text-gray-900">{displayName}</p>
                 <p className="text-xs text-gray-400">{displayEmail}</p>
@@ -115,7 +114,7 @@ export default function Navbar() {
                   className="flex items-center gap-2.5 w-full px-3 py-2 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   <User className="w-4 h-4" />
-                  <span>Profil & Pengaturan</span>
+                  <span>Profil &amp; Pengaturan</span>
                 </Link>
                 <button
                   onClick={handleLogout}

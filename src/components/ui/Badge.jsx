@@ -1,14 +1,3 @@
-/**
- * Badge — Reusable status badge component
- *
- * Variants:
- *  - "urgent"  → merah  (basi ≤ 2 hari)
- *  - "warning" → kuning (3-5 hari)
- *  - "fresh"   → hijau  (> 5 hari)
- *  - "info"    → biru
- *  - "orange"  → oranye (popular/badge resep)
- */
-
 const VARIANT_CLASSES = {
   urgent:  'bg-red-100 text-red-700 border border-red-200',
   warning: 'bg-amber-100 text-amber-700 border border-amber-200',
@@ -18,9 +7,6 @@ const VARIANT_CLASSES = {
   gray:    'bg-gray-100 text-gray-600 border border-gray-200',
 };
 
-/**
- * @param {{ variant?: keyof VARIANT_CLASSES, label: string, className?: string }} props
- */
 export default function Badge({ variant = 'fresh', label, className = '' }) {
   const classes = VARIANT_CLASSES[variant] ?? VARIANT_CLASSES.gray;
 

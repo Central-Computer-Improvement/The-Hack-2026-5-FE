@@ -4,25 +4,23 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, Camera, Refrigerator, UtensilsCrossed,
-  Heart, Settings, HelpCircle,
+  Heart, Settings, HelpCircle, TrendingUp,
 } from 'lucide-react';
 
-/** Daftar menu utama, disambungin ke halaman-halaman aplikasi */
 const NAV_ITEMS = [
-  { href: '/',                  label: 'Dashboard',       icon: LayoutDashboard },
-  { href: '/aipantryscan',      label: 'AI Pantry Scan',  icon: Camera },
-  { href: '/pantry',            label: 'Pantry Tracker',  icon: Refrigerator },
-  { href: '/recipe',            label: 'Recipe Generator',icon: UtensilsCrossed },
-  { href: '/favorites',         label: 'Favorites',       icon: Heart },
+  { href: '/',          label: 'Dashboard',       icon: LayoutDashboard },
+  { href: '/ai',        label: 'AI Pantry Scan',  icon: Camera },
+  { href: '/pantry',    label: 'Pantry Tracker',  icon: Refrigerator },
+  { href: '/recipe',    label: 'Recipe Generator',icon: UtensilsCrossed },
+  { href: '/favorites', label: 'Favorites',       icon: Heart },
+  { href: '/savings',   label: 'Savings & Impact',icon: TrendingUp },
 ];
 
-/** Link tambahan buat di bawah (kayak pengaturan & bantuan) */
 const FOOTER_ITEMS = [
   { href: '/settings', label: 'Settings', icon: Settings },
   { href: '#',         label: 'Help',     icon: HelpCircle },
 ];
 
-/** Komponen link sidebar yang bisa dipake berulang, otomatis nyala kalau lagi aktif */
 function NavLink({ href, label, icon: Icon, isActive }) {
   return (
     <Link

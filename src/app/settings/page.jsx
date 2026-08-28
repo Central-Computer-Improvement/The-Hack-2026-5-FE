@@ -2,13 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, Save, LogOut } from 'lucide-react';
+import { User, LogOut } from 'lucide-react';
 import Modal from '../../components/ui/Modal';
 import Toast from '../../components/ui/Toast';
 import { useAuth } from '../../context/AuthContext';
 import { getMe } from '../../services/auth.service';
 
-/** Komponen kartu serbaguna, lengkap sama icon di judulnya */
 function SectionCard({ title, icon: Icon, children }) {
   return (
     <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-5">
@@ -33,7 +32,6 @@ export default function SettingsPage() {
   const showToast = (msg, type = 'success') => setToast({ message: msg, type });
   const hideToast = () => setToast({ message: '', type: 'success' });
 
-  /** Tarik data profil dari API pas awal dibuka, kalau gagal ya pakai data dari AuthContext aja */
   useEffect(() => {
     if (user) setProfile({ name: user.name ?? '', email: user.email ?? '' });
     getMe()
@@ -44,17 +42,10 @@ export default function SettingsPage() {
       .catch(() => {});
   }, [user]);
 
-  const handleSaveProfile = () => showToast('Profil berhasil disimpan secara lokal!');
-
   const handleLogout = () => {
     setShowLogoutModal(false);
     logout();
     router.push('/login');
-  };
-
-  const formatCurrency = (val) => {
-    const num = val.replace(/\D/g, '');
-    return num ? Number(num).toLocaleString('id-ID') : '';
   };
 
   const initials = profile.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase();
@@ -92,12 +83,6 @@ export default function SettingsPage() {
               />
               <p className="text-[11px] text-gray-400 mt-1">Email tidak dapat diubah melalui aplikasi ini.</p>
             </div>
-            <button
-              onClick={handleSaveProfile}
-              className="flex items-center gap-2 bg-[#1C482B] hover:bg-[#153821] text-white font-bold px-5 py-2.5 rounded-2xl transition-all cursor-pointer text-sm shadow-sm active:scale-95"
-            >
-              <Save className="w-4 h-4" /><span>Simpan Profil</span>
-            </button>
           </div>
         </SectionCard>
 

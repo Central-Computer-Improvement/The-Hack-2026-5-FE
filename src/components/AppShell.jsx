@@ -7,10 +7,8 @@ import MobileNav from './MobileNav';
 import Navbar from './Navbar';
 import { useAuth } from '../context/AuthContext';
 
-/** Halaman yang bebas diakses tanpa login dan nggak pakai layout sidebar */
 const AUTH_ROUTES = ['/login', '/register'];
 
-/** Penentuan layout: halaman auth tampil full layar, sisanya pakai kombinasi sidebar + navbar */
 export default function AppShell({ children }) {
   const pathname = usePathname();
   const router = useRouter();

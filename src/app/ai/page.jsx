@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Camera, Upload, Leaf, Sparkles, Check, RefreshCw, X, AlertCircle, Plus } from 'lucide-react';
-import { scanPantry, generateRecipes } from '../../services/ai.service';
+import { scanPantry } from '../../services/ai.service';
 import { addPantryItem } from '../../services/pantry.service';
 import Toast from '../../components/ui/Toast';
+import { Skeleton } from '../../components/ui/Skeleton';
 
 export default function AiPantryScanPage() {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -23,7 +24,6 @@ export default function AiPantryScanPage() {
   const showToast = useCallback((message, type = 'success') => setToast({ message, type }), []);
   const hideToast = useCallback(() => setToast({ message: '', type: 'success' }), []);
 
-  /** Stop camera stream and clean up video element */
   const stopCamera = useCallback(() => {
     if (stream) stream.getTracks().forEach((t) => t.stop());
     if (videoRef.current) videoRef.current.srcObject = null;
@@ -31,9 +31,8 @@ export default function AiPantryScanPage() {
     setIsCameraActive(false);
   }, [stream]);
 
-  useEffect(() => () => stopCamera(), []);
+  useEffect(() => () => stopCamera(), [stopCamera]);
 
-  /** Attach active stream to video element */
   useEffect(() => {
     if (isCameraActive && stream && videoRef.current) {
       videoRef.current.srcObject = stream;
@@ -41,7 +40,6 @@ export default function AiPantryScanPage() {
     }
   }, [isCameraActive, stream]);
 
-  /** Call Vision AI with the provided base64 image string */
   const runScan = async (imageBase64) => {
     setIsScanning(true);
     setDetectedItems([]);
@@ -127,13 +125,6 @@ export default function AiPantryScanPage() {
       <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/jpeg,image/png,image/heic,image/webp" className="hidden" />
 
       <div className="max-w-6xl mx-auto">
-        <div className="mb-10">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-[#1B3022] tracking-tight">Vision Pantry Scan</h1>
-          <p className="text-gray-500 text-base md:text-lg mt-2 max-w-2xl leading-relaxed">
-            Upload foto kulkas atau meja dapur Anda, dan AI kami akan langsung mendeteksi bahan-bahan untuk saran resep zero-waste.
-          </p>
-        </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           <div className="lg:col-span-7 flex flex-col items-center justify-center">
             <div className="w-full aspect-[4/3] bg-[#758474] rounded-3xl overflow-hidden shadow-inner flex flex-col items-center justify-center relative p-6 group transition-all">
@@ -206,7 +197,7 @@ export default function AiPantryScanPage() {
 
                 {isScanning ? (
                   <div className="space-y-3">
-                    {[1, 2, 3].map((i) => <div key={i} className="h-16 bg-gray-100 rounded-2xl animate-pulse" />)}
+                    {[1, 2, 3].map((i) => <Skeleton key={i} className="h-16 rounded-2xl" />)}
                   </div>
                 ) : detectedItems.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-12 text-center">

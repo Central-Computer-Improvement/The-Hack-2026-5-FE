@@ -2,15 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
-import { Averia_Serif_Libre } from "next/font/google";
-
-const averia = Averia_Serif_Libre({ weight: ['300', '400', '700'], subsets: ["latin"] });
 import { registerUser } from '../../services/auth.service';
 import { useAuth } from '../../context/AuthContext';
 
-/** Visual password strength meter based on character rules */
 function PasswordStrength({ password }) {
   const getStrength = (pw) => {
     if (!pw) return { level: 0, label: '', color: '' };
@@ -92,36 +89,28 @@ export default function RegisterPage() {
   const inputBase = 'w-full py-3 rounded-2xl border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1C482B]/40 focus:border-[#1C482B] transition-all bg-white';
 
   return (
-    <div className={`flex w-full min-h-screen ${averia.className}`}>
-      <div className="hidden lg:flex lg:w-[40%] bg-[#1C482B] flex-col justify-between p-12 relative overflow-hidden">
-
-        <div className="relative z-10 flex items-center gap-3">
-          <span className="text-white font-extrabold text-xl tracking-tight">Smart Recipe AI</span>
-        </div>
-
-        <div className="relative z-10">
-          <h2 className="text-4xl font-black text-white leading-tight mb-4">
-            Bergabung &<br />
-            <span className="text-emerald-300">Mulai Hemat</span><br />
-            Hari Ini.
+    <div className="flex w-full min-h-screen">
+      <div className="hidden lg:block lg:w-[40%] relative overflow-hidden">
+        <Image
+          src="/login.jpg"
+          alt="Smart Recipe AI illustration"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-[#1C482B]/50" />
+        <div className="absolute inset-0 flex flex-col justify-end p-12">
+          <h2 className="text-4xl font-black text-white leading-tight tracking-tight">
+            Smart Recipe AI
           </h2>
-          <p className="text-emerald-100/80 text-base font-medium leading-relaxed">
-            Daftarkan akun gratis Anda dan mulai perjalanan memasak cerdas tanpa buang-buang bahan makanan.
+          <p className="text-emerald-100/80 text-base font-medium mt-2">
+            Zero-Waste Kitchen, powered by AI.
           </p>
-          <div className="mt-8 space-y-3">
-            {['Setup profil dapur Anda', 'Pilih preferensi diet', 'Langsung mulai scan pantry'].map((s) => (
-              <div key={s} className="flex items-center gap-3">
-                <span className="text-emerald-100/90 text-sm font-medium">- {s}</span>
-              </div>
-            ))}
-          </div>
         </div>
-
-        <p className="relative z-10 text-emerald-100/50 text-xs">Bergabung dengan 2.000+ pengguna aktif</p>
       </div>
 
       <div className="flex-1 flex flex-col justify-center items-center px-6 py-12 bg-[#F6F8F6] overflow-y-auto">
-        <div className="w-full max-w-md animate-fade-in-up">
+        <div className="w-full max-w-md">
           <div className="flex items-center gap-2 mb-8 lg:hidden">
             <span className="font-extrabold text-[#1C482B] text-lg">Smart Recipe AI</span>
           </div>
@@ -214,7 +203,7 @@ export default function RegisterPage() {
                 </div>
                 <span className="text-sm text-gray-600">
                   Saya setuju dengan{' '}
-                  <Link href="#" className="text-[#1C482B] font-semibold hover:underline">Syarat & Ketentuan</Link>
+                  <Link href="#" className="text-[#1C482B] font-semibold hover:underline">Syarat &amp; Ketentuan</Link>
                   {' '}dan{' '}
                   <Link href="#" className="text-[#1C482B] font-semibold hover:underline">Kebijakan Privasi</Link>
                 </span>
@@ -229,9 +218,7 @@ export default function RegisterPage() {
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                <>
-                  <span>Daftar Akun Baru</span>
-                </>
+                <span>Daftar Akun Baru</span>
               )}
             </button>
           </form>
